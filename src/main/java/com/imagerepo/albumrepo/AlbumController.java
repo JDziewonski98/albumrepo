@@ -8,12 +8,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:1234")
 @RequestMapping(path = "api/v1")
 public class AlbumController {
 
@@ -32,7 +33,7 @@ public class AlbumController {
                                          @RequestParam("artist") String artist) throws IOException {
 
         AlbumModel albumModel = new AlbumModel(imgfile.getOriginalFilename(), title, description, imgfile.getBytes(),
-                genres, imgfile.getContentType(),artist);
+                Arrays.asList(genres), imgfile.getContentType(),artist);
         albumRepo.save(albumModel);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

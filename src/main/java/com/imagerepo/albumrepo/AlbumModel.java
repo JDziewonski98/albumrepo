@@ -1,6 +1,8 @@
 package com.imagerepo.albumrepo;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "album_table")
@@ -11,7 +13,7 @@ public class AlbumModel {
     }
 
     public AlbumModel(String filename, String title, String description, byte[] picture,
-                      Genre[] genres, String type, String artist) {
+                      Collection<Genre> genres, String type, String artist) {
         this.filename = filename;
         this.title = title;
         this.description = description;
@@ -23,7 +25,7 @@ public class AlbumModel {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "filename")
@@ -38,8 +40,11 @@ public class AlbumModel {
     @Column(name = "picture", length = 1000)
     private byte[] picture;
 
-    @Column(name = "genres")
-    private Genre[] genres;
+    @ElementCollection(targetClass = Genre.class, fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    //@Column(name = "genres")
+    @CollectionTable
+    private Collection<Genre> genres;
 
     public String getArtist() {
         return artist;
@@ -95,19 +100,19 @@ public class AlbumModel {
         this.picture = picture;
     }
 
-    public Genre[] getGenres() {
-        return genres;
-    }
-
-    public void setGenres(Genre[] genres) {
-        this.genres = genres;
-    }
-
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Collection<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<Genre> genres) {
+        this.genres = genres;
     }
 }
