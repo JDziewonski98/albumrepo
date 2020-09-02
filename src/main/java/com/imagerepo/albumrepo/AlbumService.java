@@ -3,11 +3,9 @@ package com.imagerepo.albumrepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
@@ -27,9 +25,26 @@ public class AlbumService {
                 Arrays.asList(genres), imgfile.getContentType(),artist);
         albumRepo.save(albumModel);
     }
-//    public ArrayList<AlbumModel> searchByKeyword(String input) {
-//
-//    }
+    public HashSet<AlbumModel> searchByKeyword(String input) {
+        return albumRepo.findByMatchingString(input);
+    }
+
+    public HashSet<AlbumModel> searchByGenre(Genre[] genres) {
+        HashSet<AlbumModel> albums = new HashSet<>(Collections.emptySet());
+        for (Genre genre : genres) {
+            albums.addAll(albumRepo.findByMatchingAnyGenre(genre));
+        }
+        return albums;
+    }
+
+    public HashSet<AlbumModel> searchByGenreMatchAll(Genre[] genres) {
+        HashSet<AlbumModel> albums = new HashSet<>(Collections.emptySet());
+        for (Genre genre : genres) {
+            albums.addAll(albumRepo.findByMatchingAnyGenre(genre));
+        }
+        albums.removeIf(a -> !(Arrays.equals(a.getGenres().toArray(), genres)));
+        return albums;
+    }
 
     public static byte[] decompress(byte[] data) {
         Inflater inflater = new Inflater();

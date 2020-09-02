@@ -46,7 +46,7 @@ public class AlbumModel {
 
     @ElementCollection(targetClass = Genre.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @CollectionTable
+    @CollectionTable(name = "genres")
     private Collection<Genre> genres;
 
     @Column(name = "artist")

@@ -7,24 +7,61 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.lang.reflect.Array;
-import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AuthenticatorPersistenceTest {
     @Autowired AlbumRepo albumRepo;
     private final Genre[] genres = new Genre[]{Genre.Pop, Genre.Jazz};
+    private final Genre[] genres2 = new Genre[]{Genre.Metal};
     private final AlbumModel albumModelToSave = new AlbumModel("testimg", "testalbum",
             "test description", new byte[0], Arrays.asList(genres), ".png", "testartist" );
     @Before
     public void clearDB() {
         albumRepo.deleteAll();
+    }
+
+    @Test
+    public void testCreateAlbum() {
+        byte[] b = new byte[20];
+        new Random().nextBytes(b);
+        AlbumModel testAlbum = new AlbumModel("testimg", "testalbum",
+                "test description", b, Arrays.asList(genres), ".png", "testartist" );
+        albumRepo.save(testAlbum);
+        Optional<AlbumModel> albumFromDB = albumRepo.findByTitle("testalbum");
+        Assert.assertTrue(albumFromDB.isPresent());
+        AlbumModel albumFromDBNonOptional = albumFromDB.get();
+        Assert.assertEquals(albumFromDBNonOptional.getArtist(), albumFromDBNonOptional.getArtist());
+        this.compareEntities(testAlbum, albumFromDBNonOptional);
+    }
+
+    @Test
+    public void testSearchByMatchingString() {
+        this.createVariousAlbums();
+        HashSet<AlbumModel> albums = albumRepo.findByMatchingString("Beautiful");
+        Assert.assertEquals(2, albums.size());
+        albums = albumRepo.findByMatchingString("Big Boss");
+        Assert.assertEquals(2, albums.size());
+        albums = albumRepo.findByMatchingString("funk");
+        Assert.assertEquals(1, albums.size());
+        albums = albumRepo.findByMatchingString("avant garde");
+        Assert.assertEquals(0, albums.size());
+        albums = albumRepo.findByMatchingString("non-existent");
+        Assert.assertEquals(0, albums.size());
+    }
+
+    @Test
+    public void testSearchByGenre() {
+        this.createVariousAlbums();
+
+        HashSet<AlbumModel> genreSet = albumRepo.findByMatchingAnyGenre(Genre.Metal);
+        Assert.assertEquals(1, genreSet.size());
+        genreSet = albumRepo.findByMatchingAnyGenre(Genre.Jazz);
+        Assert.assertEquals(3, genreSet.size());
+        genreSet = albumRepo.findByMatchingAnyGenre(Genre.Classical);
+        Assert.assertEquals(0, genreSet.size());
+
     }
 
     private void compareEntities(AlbumModel a1, AlbumModel a2) {
@@ -50,7 +87,7 @@ public class AuthenticatorPersistenceTest {
                 ".png", "jonathan l" );
         albumRepo.save(sadAlbum);
         AlbumModel heavyAlbum = new AlbumModel("testimg", "metal",
-                "beautiful and brutal", this.getRandomByteArray(), Arrays.asList(genres),
+                "beautiful and brutal", this.getRandomByteArray(), Arrays.asList(genres2),
                 ".png", "magnetica" );
         albumRepo.save(heavyAlbum);
         AlbumModel funkyAlbum = new AlbumModel("testimg", "funk all day",
@@ -64,32 +101,5 @@ public class AuthenticatorPersistenceTest {
         byte[] b = new byte[20];
         new Random().nextBytes(b);
         return b;
-    }
-
-    @Test
-    public void testCreateAlbum() {
-        byte[] b = new byte[20];
-        new Random().nextBytes(b);
-        AlbumModel testAlbum = new AlbumModel("testimg", "testalbum",
-                "test description", b, Arrays.asList(genres), ".png", "testartist" );
-        albumRepo.save(testAlbum);
-        Optional<AlbumModel> albumFromDB = albumRepo.findByTitle("testalbum");
-        Assert.assertTrue(albumFromDB.isPresent());
-        AlbumModel albumFromDBNonOptional = albumFromDB.get();
-        Assert.assertEquals(albumFromDBNonOptional.getArtist(), albumFromDBNonOptional.getArtist());
-        this.compareEntities(testAlbum, albumFromDBNonOptional);
-    }
-
-    @Test
-    public void testSearchFunction() {
-        this.createVariousAlbums();
-        ArrayList<AlbumModel> beautifulAlbums = albumRepo.findByMatchingString("Beautiful");
-        Assert.assertEquals(2, beautifulAlbums.size());
-        ArrayList<AlbumModel> bigBossAlbums = albumRepo.findByMatchingString("big boss");
-        Assert.assertEquals(2, bigBossAlbums.size());
-        ArrayList<AlbumModel> funkyAlbums = albumRepo.findByMatchingString("funk");
-        Assert.assertEquals(1, funkyAlbums.size());
-        ArrayList<AlbumModel> avantgardeAlbums = albumRepo.findByMatchingString("avant garde");
-        Assert.assertEquals(0, avantgardeAlbums.size());
     }
 }

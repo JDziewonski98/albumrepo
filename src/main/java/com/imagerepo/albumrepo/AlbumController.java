@@ -7,11 +7,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Optional;
-import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
+import java.util.Collections;
+import java.util.HashSet;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:1234")
@@ -26,11 +24,11 @@ public class AlbumController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadImage(@RequestParam("imgFile") MultipartFile imgfile,
-                                         @RequestParam("title") String title,
-                                         @RequestParam("description") String description,
-                                         @RequestParam("genres") Genre[] genres,
-                                         @RequestParam("artist") String artist) {
+    public ResponseEntity<?> uploadImage(@RequestBody MultipartFile imgfile,
+                                         @RequestBody String title,
+                                         @RequestBody String description,
+                                         @RequestBody Genre[] genres,
+                                         @RequestBody String artist) {
 
         if (StringUtils.isEmpty(title) || StringUtils.isEmpty(artist) || StringUtils.isEmpty(artist) || imgfile == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -42,6 +40,38 @@ public class AlbumController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchForAlbums(@RequestParam String text, @RequestParam Genre[] genres, @RequestParam boolean exactMatch) {
+        HashSet<AlbumModel> textMatchedAlbums = new HashSet<>(Collections.emptySet());
+        HashSet<AlbumModel> genreMatchedAlbums = new HashSet<>(Collections.emptySet());
+        if (StringUtils.isEmpty(text) && genres.length == 0) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if (!StringUtils.isEmpty(text)) {
+            textMatchedAlbums = albumService.searchByKeyword(text);
+        }
+        if (genres.length > 0) {
+            if (exactMatch) {
+                //search for albums that have EVERY one of the genre tags provided
+                genreMatchedAlbums = albumService.searchByGenreMatchAll(genres);
+            }
+            else {
+                //search for albums that have ANY OF the genre tags provided
+                genreMatchedAlbums = albumService.searchByGenre(genres);
+            }
+        }
+        if (textMatchedAlbums.isEmpty()) {
+            return new ResponseEntity<>(genreMatchedAlbums, HttpStatus.CREATED);
+        }
+        else if (genreMatchedAlbums.isEmpty()) {
+            return new ResponseEntity<>(textMatchedAlbums, HttpStatus.CREATED);
+        }
+        else {
+            //return intersection of the 2 search results
+            return new ResponseEntity<>(genreMatchedAlbums.retainAll(textMatchedAlbums), HttpStatus.CREATED);
+        }
     }
 
 //    @GetMapping("/get/{albumTitle}")

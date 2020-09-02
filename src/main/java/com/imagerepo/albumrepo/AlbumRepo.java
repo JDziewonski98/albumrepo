@@ -2,10 +2,7 @@ package com.imagerepo.albumrepo;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
 
 public interface AlbumRepo extends CrudRepository<AlbumModel, Long> {
@@ -13,5 +10,8 @@ public interface AlbumRepo extends CrudRepository<AlbumModel, Long> {
 
     @Query("FROM AlbumModel WHERE lower(title) LIKE lower(concat('%',?1,'%')) OR lower(description) LIKE " +
             "lower(concat('%',?1,'%')) OR lower(artist) LIKE lower(concat('%',?1,'%'))")
-    ArrayList<AlbumModel> findByMatchingString(String query);
+    HashSet<AlbumModel> findByMatchingString(String query);
+
+    @Query("SELECT a FROM AlbumModel a JOIN a.genres g WHERE g = ?1")
+    HashSet<AlbumModel> findByMatchingAnyGenre(Genre genre);
 }
