@@ -3,12 +3,12 @@ package com.imagerepo.albumrepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
@@ -18,11 +18,11 @@ import java.util.zip.Inflater;
 @RequestMapping(path = "api/v1")
 public class AlbumController {
 
-    private final AlbumRepo albumRepo;
+    private final AlbumService albumService;
 
     @Autowired
-    public AlbumController(AlbumRepo albumRepo) {
-        this.albumRepo = albumRepo;
+    public AlbumController(AlbumService albumRepo) {
+        this.albumService = albumRepo;
     }
 
     @PostMapping("/upload")
@@ -30,39 +30,28 @@ public class AlbumController {
                                          @RequestParam("title") String title,
                                          @RequestParam("description") String description,
                                          @RequestParam("genres") Genre[] genres,
-                                         @RequestParam("artist") String artist) throws IOException {
+                                         @RequestParam("artist") String artist) {
 
-        AlbumModel albumModel = new AlbumModel(imgfile.getOriginalFilename(), title, description, imgfile.getBytes(),
-                Arrays.asList(genres), imgfile.getContentType(),artist);
-        albumRepo.save(albumModel);
+        if (StringUtils.isEmpty(title) || StringUtils.isEmpty(artist) || StringUtils.isEmpty(artist) || imgfile == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try {
+            this.albumService.uploadAlbum(imgfile, title, description, genres, artist);
+        }
+        catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/get/{albumTitle}")
-    public AlbumModel getAlbum(@PathVariable("title") String title) throws IOException{
-        Optional<AlbumModel> album = albumRepo.findByTitle(title);
-        AlbumModel albumModel = new AlbumModel(album.get().getFilename(),album.get().getTitle(),
-                album.get().getDescription(), decompress(album.get().getPicture()), album.get().getGenres(),
-                album.get().getType(), album.get().getArtist());
-        return albumModel;
-    }
+//    @GetMapping("/get/{albumTitle}")
+//    public AlbumModel getAlbum(@PathVariable("title") String title) throws IOException{
+//        Optional<AlbumModel> album = albumRepo.findByTitle(title);
+//        AlbumModel albumModel = new AlbumModel(album.get().getFilename(),album.get().getTitle(),
+//                album.get().getDescription(), decompress(album.get().getPicture()), album.get().getGenres(),
+//                album.get().getType(), album.get().getArtist());
+//        return albumModel;
+//    }
 
-    public static byte[] decompress(byte[] data) {
-        Inflater inflater = new Inflater();
-        inflater.setInput(data);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-        byte[] buffer = new byte[1024];
-        try {
-            while (!inflater.finished()) {
-                int cnt = inflater.inflate(buffer);
-                outputStream.write(buffer, 0 , cnt);
-            }
-            outputStream.close();
-        }
-        catch (DataFormatException | IOException e) {
-            //todo handle
-        }
-        return outputStream.toByteArray();
-    }
 
 }

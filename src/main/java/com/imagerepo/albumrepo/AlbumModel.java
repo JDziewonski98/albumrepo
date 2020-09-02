@@ -1,5 +1,7 @@
 package com.imagerepo.albumrepo;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
@@ -29,9 +31,11 @@ public class AlbumModel {
     private Long id;
 
     @Column(name = "filename")
+    @NotNull
     private String filename;
 
     @Column(name = "title")
+    @NotNull
     private String title;
 
     @Column(name = "description")
@@ -42,9 +46,12 @@ public class AlbumModel {
 
     @ElementCollection(targetClass = Genre.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    //@Column(name = "genres")
     @CollectionTable
     private Collection<Genre> genres;
+
+    @Column(name = "artist")
+    @NotNull
+    private String artist;
 
     public String getArtist() {
         return artist;
@@ -53,9 +60,6 @@ public class AlbumModel {
     public void setArtist(String artist) {
         this.artist = artist;
     }
-
-    @Column(name = "artist")
-    private String artist;
 
     public String getType() {
         return type;
