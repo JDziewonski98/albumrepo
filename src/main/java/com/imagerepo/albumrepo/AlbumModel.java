@@ -41,7 +41,7 @@ public class AlbumModel {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "picture", length = 1000)
+    @Column(name = "picture", length = 1000000)
     private byte[] picture;
 
     @ElementCollection(targetClass = Genre.class, fetch = FetchType.EAGER)

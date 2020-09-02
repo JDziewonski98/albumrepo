@@ -1,11 +1,12 @@
 package com.imagerepo.albumrepo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -18,27 +19,28 @@ public class AlbumController {
 
     private final AlbumService albumService;
 
+    private static final Logger LOG = LoggerFactory.getLogger(AlbumController.class);
+
     @Autowired
     public AlbumController(AlbumService albumRepo) {
         this.albumService = albumRepo;
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadImage(@RequestBody MultipartFile imgfile,
-                                         @RequestBody String title,
-                                         @RequestBody String description,
-                                         @RequestBody Genre[] genres,
-                                         @RequestBody String artist) {
+    public ResponseEntity<?> uploadImage(@ModelAttribute UploadAlbumWrapper model) {
 
-        if (StringUtils.isEmpty(title) || StringUtils.isEmpty(artist) || StringUtils.isEmpty(artist) || imgfile == null) {
+        if (StringUtils.isEmpty(model.getTitle()) || StringUtils.isEmpty(model.getArtist()) || model.getImgfile() == null) {
+            LOG.info("Bad request!");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         try {
-            this.albumService.uploadAlbum(imgfile, title, description, genres, artist);
+            LOG.info("Uploading album with title {}", model.getArtist());
+            this.albumService.uploadAlbum(model.getImgfile(), model.getTitle(), model.getDescription(), model.getGenres(), model.getArtist());
         }
         catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        LOG.info("Done.");
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -51,15 +53,18 @@ public class AlbumController {
         }
         if (!StringUtils.isEmpty(text)) {
             textMatchedAlbums = albumService.searchByKeyword(text);
+            LOG.info("Got text matched albums.");
         }
         if (genres.length > 0) {
             if (exactMatch) {
                 //search for albums that have EVERY one of the genre tags provided
                 genreMatchedAlbums = albumService.searchByGenreMatchAll(genres);
+                LOG.info("Got exact genre matched albums.");
             }
             else {
                 //search for albums that have ANY OF the genre tags provided
                 genreMatchedAlbums = albumService.searchByGenre(genres);
+                LOG.info("Got any genre matched albums.");
             }
         }
         if (textMatchedAlbums.isEmpty()) {
@@ -73,15 +78,5 @@ public class AlbumController {
             return new ResponseEntity<>(genreMatchedAlbums.retainAll(textMatchedAlbums), HttpStatus.CREATED);
         }
     }
-
-//    @GetMapping("/get/{albumTitle}")
-//    public AlbumModel getAlbum(@PathVariable("title") String title) throws IOException{
-//        Optional<AlbumModel> album = albumRepo.findByTitle(title);
-//        AlbumModel albumModel = new AlbumModel(album.get().getFilename(),album.get().getTitle(),
-//                album.get().getDescription(), decompress(album.get().getPicture()), album.get().getGenres(),
-//                album.get().getType(), album.get().getArtist());
-//        return albumModel;
-//    }
-
 
 }
