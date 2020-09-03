@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    username: sa
+    password:
+    url: jdbc:h2:file:~/local-db-bbs # creates a file at %userprofile% named local.db.
+    driverClassName: org.h2.Driver
+    #initialization-mode: always
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+#    hibernate:
+#      ddl-auto: none
+  h2:
+    console:
+      enabled: true
+      path: /h2
