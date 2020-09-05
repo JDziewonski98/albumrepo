@@ -26,6 +26,9 @@
           <q-card-section class="text-subitle2">{{
             description
           }}</q-card-section>
+          <q-card-section class="text-subitle2 q-pt-none">{{
+            formatGenres()
+          }}</q-card-section>
         </div>
       </q-slide-transition>
     </q-card>
@@ -40,10 +43,13 @@ export default {
       expandedpanel: false
     }
   },
-  props: ['item', 'id', 'description', 'picture', 'title', 'artist', 'type'],
+  props: ['item', 'id', 'description', 'picture', 'title', 'artist', 'type', 'genres'],
   methods: {
     expand () {
       this.expandedpanel = !this.expandedpanel
+    },
+    formatGenres () {
+      return 'Genres: ' + this.genres.join(', ')
     }
   },
   filters: {

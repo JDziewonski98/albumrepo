@@ -6,7 +6,7 @@
           <q-btn name="cancel" class="cursor-pointer" />
         </template>
         <template v-slot:append>
-          <q-icon name="search" />
+          <q-icon name="search" class="cursor-pointer" @click="onSearch" />
         </template>
       </q-input>
     </form>
@@ -44,6 +44,7 @@
             :description="item.description"
             :type="item.type"
             :picture="item.picture"
+            :genres="item.genres"
             :item="item"
           />
     </div>
@@ -98,6 +99,10 @@ export default {
       console.log(this.text)
       console.log(this.multiple)
       console.log(this.value)
+      if (this.text === '' && this.multiple == null) {
+        this.getAlbums()
+        return
+      }
       this.$axios
         .get('search/', {
           params: {
@@ -109,6 +114,12 @@ export default {
         .then(response => {
           const data = response.data
           console.log(data)
+          this.items = []
+          Object.keys(data).forEach(key => {
+            console.log(key)
+            this.items[key] = data[key]
+          })
+          console.log(this.items)
         })
         .catch(() => {
           this.$q.notify({
