@@ -46,4 +46,13 @@ public class AlbumService {
         albums.removeIf(a -> !(Arrays.equals(a.getGenres().toArray(), genres)));
         return albums;
     }
+
+    public HashSet<AlbumModel> getAll() {
+        HashSet<AlbumModel> allAlbums = new HashSet<>();
+        Iterable<AlbumModel> albums = albumRepo.findAll();
+        for (AlbumModel album: albums) {
+            allAlbums.add(album);
+        }
+        return allAlbums;
+    }
 }

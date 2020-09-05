@@ -9,11 +9,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:1234")
+@CrossOrigin(origins = "http://localhost:8090")
 @RequestMapping(path = "api/v1")
 public class AlbumController {
 
@@ -44,8 +45,14 @@ public class AlbumController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @GetMapping("/getall")
+    public ResponseEntity<?> getAll() {
+        return new ResponseEntity<>(albumService.getAll(), HttpStatus.CREATED);
+    }
+
     @GetMapping("/search")
     public ResponseEntity<?> searchForAlbums(@RequestParam String text, @RequestParam Genre[] genres, @RequestParam boolean exactMatch) {
+        LOG.info("Search request on text {} with genres {} exact match {}", text, Arrays.toString(genres), exactMatch);
         HashSet<AlbumModel> textMatchedAlbums = new HashSet<>(Collections.emptySet());
         HashSet<AlbumModel> genreMatchedAlbums = new HashSet<>(Collections.emptySet());
         if (StringUtils.isEmpty(text) && genres.length == 0) {
@@ -75,7 +82,8 @@ public class AlbumController {
         }
         else {
             //return intersection of the 2 search results
-            return new ResponseEntity<>(genreMatchedAlbums.retainAll(textMatchedAlbums), HttpStatus.CREATED);
+            genreMatchedAlbums.retainAll(textMatchedAlbums);
+            return new ResponseEntity<>(genreMatchedAlbums, HttpStatus.CREATED);
         }
     }
 
