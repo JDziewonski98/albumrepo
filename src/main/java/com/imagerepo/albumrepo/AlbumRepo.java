@@ -14,4 +14,7 @@ public interface AlbumRepo extends CrudRepository<AlbumModel, Long> {
 
     @Query("SELECT a FROM AlbumModel a JOIN a.genres g WHERE g = ?1")
     HashSet<AlbumModel> findByMatchingAnyGenre(Genre genre);
+
+    @Query("SELECT distinct a FROM AlbumModel a JOIN a.genres g WHERE g in ?1 group by a.id having count(a.id) = ?2")
+    HashSet<AlbumModel> findByExactGenre(Genre[] genres, long genrelistlength);
 }

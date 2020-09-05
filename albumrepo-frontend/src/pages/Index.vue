@@ -49,6 +49,33 @@
           />
     </div>
   </div>
+  <q-form @submit="createitem" class="q-gutter-lg q-pa-xl">
+          <q-input filled v-model="title" label="Title" />
+          <q-input filled v-model="artist" label="Artist" />
+          <q-select
+            filled
+            v-model="genres"
+            multiple
+            :options="options"
+            label="Genres"
+          />
+          <q-input filled v-model="description" label="Description" />
+          <q-input
+            filled
+            stack-label
+            v-model="photo"
+            type="file"
+            @change="onFileChanged"
+            label="Cover Art"
+          />
+          <div style="text-align:center;">
+            <q-btn
+              label="Create Album"
+              type="submit"
+              style="background:#cad5db;"
+            />
+          </div>
+  </q-form>
 </q-layout>
 </template>
 
@@ -68,7 +95,14 @@ export default {
         'Metal',
         'Jazz',
         'Classical'
-      ]
+      ],
+      title: null,
+      artist: null,
+      genres: null,
+      description: null,
+      photo: null,
+      newPic: null,
+      oldPic: null
     }
   },
   methods: {
@@ -78,13 +112,12 @@ export default {
         .get('getall/')
         .then(response => {
           const data = response.data
-          console.log(data)
           this.items = []
           Object.keys(data).forEach(key => {
             console.log(key)
             this.items[key] = data[key]
           })
-          console.log(this.items)
+          this.items = this.items.sort((a, b) => a.id - b.id)
         })
         .catch(() => {
           this.$q.notify({
@@ -113,13 +146,12 @@ export default {
         })
         .then(response => {
           const data = response.data
-          console.log(data)
           this.items = []
           Object.keys(data).forEach(key => {
             console.log(key)
             this.items[key] = data[key]
           })
-          console.log(this.items)
+          this.items = this.items.sort((a, b) => a.id - b.id)
         })
         .catch(() => {
           this.$q.notify({
@@ -127,6 +159,45 @@ export default {
             position: 'top',
             message: 'Loading failed',
             icon: 'report_problem'
+          })
+        })
+    },
+    onFileChanged (event) {
+      this.newPic = event.target.files[0]
+      this.oldPic = URL.createObjectURL(event.target.files[0])
+    },
+    createitem () {
+      const formData = new FormData()
+      formData.append('artist', this.artist)
+      formData.append('description', this.description)
+      formData.append('photo', this.newPic)
+      formData.append('title', this.title)
+      this.genres == null ? formData.append('genres', '') : formData.append('genres', this.genres.join(', '))
+      formData.append('imgfile', this.newPic)
+
+      this.$axios
+        .post('upload/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        .then(resp => {
+          this.$q.notify({
+            color: 'green-4',
+            position: 'top',
+            textColor: 'white',
+            icon: 'cloud_done',
+            message: 'Successfully Created Album'
+          })
+          this.onSearch()
+        })
+        .catch(() => {
+          this.$q.notify({
+            color: 'red-4',
+            position: 'top',
+            textColor: 'white',
+            icon: 'error',
+            message: 'Something went wrong, please try again'
           })
         })
     }

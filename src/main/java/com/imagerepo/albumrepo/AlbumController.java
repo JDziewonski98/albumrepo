@@ -75,14 +75,19 @@ public class AlbumController {
             }
         }
         if (textMatchedAlbums.isEmpty()) {
+            LOG.info("Returning just genrematched");
             return new ResponseEntity<>(genreMatchedAlbums, HttpStatus.CREATED);
         }
         else if (genreMatchedAlbums.isEmpty()) {
+            LOG.info("Returning just textmatched");
             return new ResponseEntity<>(textMatchedAlbums, HttpStatus.CREATED);
         }
         else {
             //return intersection of the 2 search results
+            LOG.info("genre matched: {}", genreMatchedAlbums.toString());
+            LOG.info("text matched {}", textMatchedAlbums.toString());
             genreMatchedAlbums.retainAll(textMatchedAlbums);
+            LOG.info("Combined: {}", genreMatchedAlbums.toString());
             return new ResponseEntity<>(genreMatchedAlbums, HttpStatus.CREATED);
         }
     }
