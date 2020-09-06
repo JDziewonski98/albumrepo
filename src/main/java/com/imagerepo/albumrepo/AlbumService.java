@@ -52,4 +52,8 @@ public class AlbumService {
         }
         return allAlbums;
     }
+
+    public void deleteAlbum(long id) {
+        albumRepo.deleteById(id);
+    }
 }

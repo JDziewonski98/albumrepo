@@ -92,4 +92,15 @@ public class AlbumController {
         }
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> delete(@RequestParam long deleteId) {
+        try {
+            albumService.deleteAlbum(deleteId);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
