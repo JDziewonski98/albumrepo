@@ -35,6 +35,7 @@
   <div class="container">
     <div class="q-pa-md row justify-center items-start q-gutter-md">
       <Album
+            @refresh="onSearch"
             style="margin: 10px"
             v-for="item in items"
             v-bind:key="item.id"
@@ -157,7 +158,7 @@ export default {
           this.$q.notify({
             color: 'negative',
             position: 'top',
-            message: 'Loading failed',
+            message: 'Something went wrong',
             icon: 'report_problem'
           })
         })

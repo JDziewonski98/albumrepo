@@ -8,7 +8,14 @@
         <div class="text-subtitle2">{{ artist }}</div>
       </q-card-section>
 
-      <q-card-actions class="q-pt-none">
+      <q-card-actions class="q-pt-xs">
+        <q-btn
+        flat
+        color="red"
+        label="Delete"
+        @click="del"
+        class="float-right"
+        />
         <q-space />
         <q-btn
           color="primary"
@@ -50,6 +57,25 @@ export default {
     },
     formatGenres () {
       return 'Genres: ' + this.genres.join(', ')
+    },
+    del () {
+      this.$axios
+        .delete('delete/', {
+          params: {
+            deleteId: this.id
+          }
+        })
+        .then(response => {
+          this.$emit('refresh')
+        })
+        .catch(() => {
+          this.$q.notify({
+            color: 'negative',
+            position: 'top',
+            message: 'Delete failed',
+            icon: 'report_problem'
+          })
+        })
     }
   },
   filters: {

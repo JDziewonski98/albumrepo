@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -28,8 +29,10 @@ public class AlbumController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadImage(@ModelAttribute UploadAlbumWrapper model) {
-
+    public ResponseEntity<?> uploadImage(@ModelAttribute UploadAlbumWrapper model, BindingResult errors) {
+        if (errors.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         if (StringUtils.isEmpty(model.getTitle()) || StringUtils.isEmpty(model.getArtist()) || model.getImgfile() == null) {
             LOG.info("Bad request!");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
