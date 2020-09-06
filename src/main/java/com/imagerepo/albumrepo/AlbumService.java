@@ -40,10 +40,20 @@ public class AlbumService {
 
     public HashSet<AlbumModel> searchByGenreMatchAll(Genre[] genres) {
         HashSet<AlbumModel> albums = new HashSet<>(Collections.emptySet());
-        for (Genre genre : genres) {
-            albums.addAll(albumRepo.findByMatchingAnyGenre(genre));
-        }
-        albums.removeIf(a -> !(Arrays.equals(a.getGenres().toArray(), genres)));
+        albums.addAll(albumRepo.findByExactGenre(genres, genres.length));
         return albums;
+    }
+
+    public HashSet<AlbumModel> getAll() {
+        HashSet<AlbumModel> allAlbums = new HashSet<>();
+        Iterable<AlbumModel> albums = albumRepo.findAll();
+        for (AlbumModel album: albums) {
+            allAlbums.add(album);
+        }
+        return allAlbums;
+    }
+
+    public void deleteAlbum(long id) {
+        albumRepo.deleteById(id);
     }
 }

@@ -81,4 +81,13 @@ public class AlbumServiceTest {
         albums =albumService.searchByGenreMatchAll(new Genre[]{Genre.Jazz});
         Assert.assertEquals(albums.size(), 0);
     }
+
+    @Test
+    public void testGetAll() throws IOException {
+        Assert.assertTrue(albumService.getAll().isEmpty());
+        MockMultipartFile mockfile = new MockMultipartFile("data", "mockfile.png", "image/png", "testtest".getBytes());
+        albumService.uploadAlbum(mockfile, "Test album", "keyword", new Genre[]{Genre.Pop}, "Bob Dylan");
+        albumService.uploadAlbum(mockfile, "keyword album", "asdasd", new Genre[]{Genre.Pop}, "Bob Dylan");
+        Assert.assertEquals(albumService.getAll().size(), 2);
+    }
 }

@@ -6,14 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:1234")
+@CrossOrigin(origins = "http://localhost:8090")
 @RequestMapping(path = "api/v1")
 public class AlbumController {
 
@@ -27,8 +29,10 @@ public class AlbumController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadImage(@ModelAttribute UploadAlbumWrapper model) {
-
+    public ResponseEntity<?> uploadImage(@ModelAttribute UploadAlbumWrapper model, BindingResult errors) {
+        if (errors.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         if (StringUtils.isEmpty(model.getTitle()) || StringUtils.isEmpty(model.getArtist()) || model.getImgfile() == null) {
             LOG.info("Bad request!");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -44,8 +48,14 @@ public class AlbumController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @GetMapping("/getall")
+    public ResponseEntity<?> getAll() {
+        return new ResponseEntity<>(albumService.getAll(), HttpStatus.CREATED);
+    }
+
     @GetMapping("/search")
     public ResponseEntity<?> searchForAlbums(@RequestParam String text, @RequestParam Genre[] genres, @RequestParam boolean exactMatch) {
+        LOG.info("Search request on text {} with genres {} exact match {}", text, Arrays.toString(genres), exactMatch);
         HashSet<AlbumModel> textMatchedAlbums = new HashSet<>(Collections.emptySet());
         HashSet<AlbumModel> genreMatchedAlbums = new HashSet<>(Collections.emptySet());
         if (StringUtils.isEmpty(text) && genres.length == 0) {
@@ -68,15 +78,32 @@ public class AlbumController {
             }
         }
         if (textMatchedAlbums.isEmpty()) {
+            LOG.info("Returning just genrematched");
             return new ResponseEntity<>(genreMatchedAlbums, HttpStatus.CREATED);
         }
         else if (genreMatchedAlbums.isEmpty()) {
+            LOG.info("Returning just textmatched");
             return new ResponseEntity<>(textMatchedAlbums, HttpStatus.CREATED);
         }
         else {
             //return intersection of the 2 search results
-            return new ResponseEntity<>(genreMatchedAlbums.retainAll(textMatchedAlbums), HttpStatus.CREATED);
+            LOG.info("genre matched: {}", genreMatchedAlbums.toString());
+            LOG.info("text matched {}", textMatchedAlbums.toString());
+            genreMatchedAlbums.retainAll(textMatchedAlbums);
+            LOG.info("Combined: {}", genreMatchedAlbums.toString());
+            return new ResponseEntity<>(genreMatchedAlbums, HttpStatus.CREATED);
         }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> delete(@RequestParam long deleteId) {
+        try {
+            albumService.deleteAlbum(deleteId);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
