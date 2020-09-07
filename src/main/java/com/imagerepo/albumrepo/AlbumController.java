@@ -96,7 +96,7 @@ public class AlbumController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> delete(@RequestParam long deleteId) {
+    public ResponseEntity<?> deleteAlbum(@RequestParam long deleteId) {
         try {
             albumService.deleteAlbum(deleteId);
         }
