@@ -68,6 +68,7 @@ public class AuthenticatorPersistenceTest {
     }
 
     private void compareEntities(AlbumModel a1, AlbumModel a2) {
+        //todo find cleaner way of comparing
         Assert.assertEquals(a1.getArtist(), a2.getArtist());
         Assert.assertEquals(a1.getDescription(), a2.getDescription());
         Assert.assertEquals(a1.getFilename(), a2.getFilename());

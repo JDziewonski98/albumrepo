@@ -1,6 +1,7 @@
 package com.imagerepo.albumrepo;
 
 public enum Genre {
+    //can add whatever genres more I desire
     Rock("Rock"),
     Pop("Pop"),
     Metal("Metal"),
