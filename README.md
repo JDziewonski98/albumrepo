@@ -34,6 +34,7 @@ To run the backend:
 Option A)
 If you have IntelliJ installed, open this repo as an IntelliJ project, then simply build and run the main
 in the src folder.
+You can right click on the tests folder and 'run all' to run tests.
 
 Option B)
 Ensure you have Gradle installed, then run the command 'gradle bootRun' from this root directory from the terminal.
