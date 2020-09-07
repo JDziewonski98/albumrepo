@@ -13,6 +13,20 @@ I also made a front end using Vue.js to interface with the backend. Since this w
 I took the liberty of reusing some components from a previous project of mine for the front end, and hooking
 them up to my brand new backend!
 
+Here are some screenshots, scroll down for how to use + more.
+
+![github-small](https://github.com/JDziewonski98/albumrepo/blob/master/pics/mainpage.PNG)
+The Main page.
+
+![github-small](https://github.com/JDziewonski98/albumrepo/blob/master/pics/createnew.PNG)
+Creating a new posting.
+
+![github-small](https://github.com/JDziewonski98/albumrepo/blob/master/pics/exactmatch.PNG)
+Matching albums that have ALL the selected genres
+
+![github-small](https://github.com/JDziewonski98/albumrepo/blob/master/pics/textsearchnew.PNG)
+Matching albums based on text
+
 # How to use
 
 To run the backend:
