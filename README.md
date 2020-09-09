@@ -46,6 +46,7 @@ To run the frontend:
 
 # Ideas for future
 A few more ideas that I could definitely implement, given more time.
+- Paginate api responses
 - Set up Flyway to create database migrations, and to prepopualte with some data.
 - Create a login authentication system to see just your albums.
 - Add ability to edit your albums.
