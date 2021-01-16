@@ -9,6 +9,10 @@ The backend code was developed keeping in mind all the best practices for Spring
 and naming conventions, and has a pretty extensive set of unit tests written. I decided to use H2, an 
 in-memory database.
 
+The uploaded pictures are stored on the backend server. Normally, I would not do this, as it is not a scaleable solution;
+instead, i'd opt to save them on an AWS bucket, and save image paths in the database models. However, I think the solution presented
+is sufficient for this small project.
+
 I also made a front end using Vue.js to interface with the backend. Since this was a backend challenge, 
 I took the liberty of reusing some components from a previous project of mine for the front end, and hooking
 them up to my brand new backend!
