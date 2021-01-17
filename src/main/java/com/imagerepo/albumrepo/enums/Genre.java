@@ -1,4 +1,4 @@
-package com.imagerepo.albumrepo;
+package com.imagerepo.albumrepo.enums;
 
 public enum Genre {
     //can add whatever genres more I desire

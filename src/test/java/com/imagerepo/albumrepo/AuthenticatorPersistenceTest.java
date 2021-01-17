@@ -1,5 +1,8 @@
 package com.imagerepo.albumrepo;
 
+import com.imagerepo.albumrepo.enums.Genre;
+import com.imagerepo.albumrepo.models.AlbumModel;
+import com.imagerepo.albumrepo.repositories.AlbumRepo;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +18,8 @@ import java.util.*;
 @SpringBootTest
 @Transactional
 public class AuthenticatorPersistenceTest {
-    @Autowired AlbumRepo albumRepo;
+    @Autowired
+    AlbumRepo albumRepo;
     private final Genre[] genres = new Genre[]{Genre.Pop, Genre.Jazz};
     private final Genre[] genres2 = new Genre[]{Genre.Metal};
     private final AlbumModel albumModelToSave = new AlbumModel("testimg", "testalbum",

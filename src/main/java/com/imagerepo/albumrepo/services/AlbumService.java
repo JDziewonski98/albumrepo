@@ -1,5 +1,8 @@
-package com.imagerepo.albumrepo;
+package com.imagerepo.albumrepo.services;
 
+import com.imagerepo.albumrepo.models.AlbumModel;
+import com.imagerepo.albumrepo.repositories.AlbumRepo;
+import com.imagerepo.albumrepo.enums.Genre;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

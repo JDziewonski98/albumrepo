@@ -1,5 +1,6 @@
-package com.imagerepo.albumrepo;
+package com.imagerepo.albumrepo.controllers.wrappers;
 
+import com.imagerepo.albumrepo.enums.Genre;
 import org.springframework.web.multipart.MultipartFile;
 
 public class UploadAlbumWrapper {

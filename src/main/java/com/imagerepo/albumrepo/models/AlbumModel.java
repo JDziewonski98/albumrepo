@@ -1,5 +1,6 @@
-package com.imagerepo.albumrepo;
+package com.imagerepo.albumrepo.models;
 
+import com.imagerepo.albumrepo.enums.Genre;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;

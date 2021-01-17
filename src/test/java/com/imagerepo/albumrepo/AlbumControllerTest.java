@@ -1,5 +1,10 @@
 package com.imagerepo.albumrepo;
 
+import com.imagerepo.albumrepo.controllers.AlbumController;
+import com.imagerepo.albumrepo.enums.Genre;
+import com.imagerepo.albumrepo.models.AlbumModel;
+import com.imagerepo.albumrepo.repositories.AlbumRepo;
+import com.imagerepo.albumrepo.services.AlbumService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

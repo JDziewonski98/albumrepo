@@ -1,5 +1,7 @@
-package com.imagerepo.albumrepo;
+package com.imagerepo.albumrepo.repositories;
 
+import com.imagerepo.albumrepo.enums.Genre;
+import com.imagerepo.albumrepo.models.AlbumModel;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import java.util.HashSet;
