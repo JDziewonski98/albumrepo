@@ -1,24 +1,4 @@
-# Shopify Backend Challenge: Music Album Repository
 
-My submission for the Shopify backend challenge is an album repository written in Java Spring Boot.
-While it is far from the most complex backend I have created, I feel it is enough to highlight the my understanding of best practices
-and the 'cleanliness' of my code. I also decided to write unit tests for the backend, as I feel that is an essential skill.
-
-The concept for this app is to have an interface that a music record collector could use to visually
-keep track of all their albums, and be able to search based on their custom descriptions and genre tags.
-You can upload albums along with cover art, genre tags, a title, artist, and description,
-and then search for albums by genre (match any / match all), or by keyword. You can also delete them.
-
-The uploaded pictures are stored in the in-memory database as a byte array.
-I'd like to emphasize I know this is not a scaleable solution; normally I'd store them on an AWS S3 bucket.
-However, part of being a good developer is understanding when / where certain things are necessary, and I thought
-storing them like this is sufficient for this small project 😉 .
-
-I also made a front end using Vue.js to interface with the backend. Since this was a backend challenge, 
-I took the liberty of reusing some components from a previous project of mine for the front end, and hooking
-them up to my brand new backend!
-
-Here are some screenshots, scroll down for how to use + more.
 
 ![github-small](https://github.com/JDziewonski98/albumrepo/blob/master/pics/mainpage.PNG)
 The Main page.
